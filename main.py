@@ -18,7 +18,7 @@ cssutils.log.setLevel(logging.CRITICAL)
 with open('updatefile', 'r') as f:
     last_update = int(f.readline().strip())
 # Here, insert the token BotFather gave you for your bot.
-TOKEN = '<token>'
+TOKEN = ''
 # This is the url for communicating with your bot
 URL = 'https://api.telegram.org/bot%s/' % TOKEN
 
@@ -31,17 +31,19 @@ WRONG_URL_TEXT = ("That doesn't appear to be a valid URL. "
 
 def dl_stickers(page):
     images = page.find_all('span', attrs={"style": not ""})
+    index = 0
     for i in images:
+        index += 1
         imageurl = i['style']
         imageurl = cssutils.parseStyle(imageurl)
         imageurl = imageurl['background-image']
         imageurl = imageurl.replace('url(', '').replace(')', '')
         imageurl = imageurl[1:-15]
         response = urllib.request.urlopen(imageurl)
-        resize_sticker(response, imageurl)
+        resize_sticker(response, imageurl, index)
 
-def resize_sticker(image, filename):
-    filen = filename[-7:]
+def resize_sticker(image, filename, index):
+    filen = filename[-7:3] + str(index)+ filename[-4:]
     with Image(file=image) as img:
         ratio = 1
         if img.width > img.height:
@@ -99,6 +101,4 @@ while True:
                                  params=dict(chat_id=update['message']['chat']['id'],
                                              text=WRONG_URL_TEXT))
     # Let's wait a few seconds for new updates
-    sleep(1)
-
-
+sleep(1)
